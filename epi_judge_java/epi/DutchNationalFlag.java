@@ -6,13 +6,44 @@ import epi.test_framework.TimedExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class DutchNationalFlag {
   public enum Color { RED, WHITE, BLUE }
 
-  public static void dutchFlagPartition(int pivotIndex, List<Color> A) {
-    // TODO - you fill in here.
-    return;
+  public static void dutchFlagPartition(int pivotIndex, List<Color> array) {
+    int lessThanBound = 0;
+    int moreThanBound = array.size() - 1;
+    int countOfEqual = 0;
+    Color pivotColor = array.get(pivotIndex);
+
+    while (lessThanBound + countOfEqual <= moreThanBound) {
+      int index = lessThanBound + countOfEqual;
+      Color indexColor = array.get(index);
+      if (pivotColor.compareTo(indexColor) > 0) {
+        if (lessThanBound != index) {
+          swap(array, lessThanBound, index);
+        }
+        lessThanBound++;
+      } else if (pivotColor.compareTo(indexColor) < 0) {
+        swap(array, moreThanBound, index);
+        moreThanBound--;
+      } else { // == 0
+        countOfEqual++;
+      }
+    }
+    for (int i = 0; i < countOfEqual; i++) {
+      array.set(i + lessThanBound, pivotColor);
+    }
   }
+
+  private static void swap(List<Color> array, int a, int b) {
+    Color temp = array.get(a);
+    array.set(a, array.get(b));
+    array.set(b, temp);
+  }
+
   @EpiTest(testDataFile = "dutch_national_flag.tsv")
   public static void dutchFlagPartitionWrapper(TimedExecutor executor,
                                                List<Integer> A, int pivotIdx)
@@ -46,7 +77,7 @@ public class DutchNationalFlag {
     }
 
     if (i != colors.size()) {
-      throw new TestFailure("Not partitioned after " + Integer.toString(i) +
+      throw new TestFailure("Not partitioned after " + i +
                             "th element");
     } else if (count[0] != 0 || count[1] != 0 || count[2] != 0) {
       throw new TestFailure("Some elements are missing from original array");
