@@ -8,12 +8,22 @@ import java.util.List;
 public class ReplaceAndRemove {
 
   public static int replaceAndRemove(int size, char[] s) {
-    // TODO - you fill in here.
-    return 0;
+    StringBuilder stringBuilder = new StringBuilder();
+    int totalChange = 0;
+    for (char character : s) {
+      if (character == 'a') {
+        stringBuilder.append("dd");
+        totalChange++;
+      } else if (character == 'b') {
+        totalChange++;
+      } else {
+        stringBuilder.append(character);
+      }
+    }
+    return totalChange;
   }
   @EpiTest(testDataFile = "replace_and_remove.tsv")
-  public static List<String>
-  replaceAndRemoveWrapper(TimedExecutor executor, Integer size, List<String> s)
+  public static List<String> replaceAndRemoveWrapper(TimedExecutor executor, Integer size, List<String> s)
       throws Exception {
     char[] sCopy = new char[s.size()];
     for (int i = 0; i < size; ++i) {
